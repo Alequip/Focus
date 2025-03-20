@@ -2,12 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
+import pyodbc
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 app.permanent_session_lifetime = timedelta(minutes=30)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://username:password@server/database?driver=SQL+Server'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc://@localhost/Inveing?driver=ODBC+Driver+17+for+SQL+Server&Trusted_Connection=yes"
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -85,6 +85,26 @@ def logout():
     session.pop('user', None)
     session.pop('role', None)
     return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+        
+        # Crear el nuevo usuario
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, password=hashed_password, role=role)
+        
+        # Guardar el usuario en la base de datos
+        db.session.add(new_user)
+        db.session.commit()
+        
+        # Redirigir a la página de login después de registrar al usuario
+        return redirect(url_for('login'))
+    return render_template('register.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
