@@ -6,7 +6,8 @@ from datetime import timedelta
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 app.permanent_session_lifetime = timedelta(minutes=30)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://username:password@server/database?driver=SQL+Server'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://username:password@server/database?driver=SQL+Server'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -21,7 +22,8 @@ class Game(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(300), nullable=False)
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def home():

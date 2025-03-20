@@ -1,1 +1,55 @@
-<!-- Content from the canvas document -->
+<!-- admin_dashboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Welcome, Admin</h2>
+        <form method="POST" action="/add_game">
+            <div class="form-group">
+                <label>Game Title:</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Game Description:</label>
+                <textarea name="description" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Age Group:</label>
+                <select name="age_group" class="form-control">
+                    <option value="7-8">7-8</option>
+                    <option value="9-10">9-10</option>
+                    <option value="11-12">11-12</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Add Game</button>
+        </form>
+
+        <h3 class="mt-5">Existing Games</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Age Group</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>{{ game.title }}</td>
+                    <td>{{ game.description }}</td>
+                    <td>{{ game.age_group }}</td>
+                    <td><a href="/delete_game/{{ game.id }}" class="btn btn-danger">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
+</body>
+</html>
