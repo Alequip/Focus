@@ -1,26 +1,95 @@
-<!-- games.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Games</title>
+    <title>Juegos - {{ age_group }}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+
+        .game-card {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            text-align: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .game-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .game-card h5 {
+            color: #ff6347;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .game-card p {
+            color: #555;
+        }
+
+        .logout-btn {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .logout-btn a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            background-color: #d9534f; /* Rojo oscuro */
+            padding: 10px 20px;
+            border-radius: 12px;
+        }
+
+        .logout-btn a:hover {
+            background-color: #c9302c;
+        }
+
+        .header-title {
+            color: #ff6347;
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-description {
+            max-height: 100px; /* Ajusta la altura máxima según sea necesario */
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Games for Age Group: {{ age_group }}</h2>
+    <div class="container">
+        <h2 class="header-title">Juegos para {{ age_group }}</h2>
         <div class="row">
             {% for game in games %}
             <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ game.title }}</h5>
-                        <p class="card-text">{{ game.description }}</p>
-                    </div>
+                <div class="game-card">
+                    <img src="{{ url_for('static', filename='images/game_placeholder.png') }}" alt="{{ game.title }}">
+                    <h5>{{ game.title }}</h5>
+                    <p class="game-description">{{ game.description }}</p>
+                    <a href="/play_game/{{ game.id }}" class="btn btn-primary">Jugar</a>
                 </div>
             </div>
             {% endfor %}
         </div>
-        <a href="/logout" class="btn btn-danger">Logout</a>
+        <div class="logout-btn">
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
     </div>
 </body>
 </html>

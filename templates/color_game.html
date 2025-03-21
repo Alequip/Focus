@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Aventura de Colores</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='color_game/style.css') }}">
+    </head>
+    <body>
+        <div id="game-container">
+            <div id="timer-container">
+                <div id="timer-bar"></div>
+            </div>
+            <div id="color-display"></div>
+            <div id="color-options"></div>
+            <div id="score">Puntos: 0</div>
+            <div id="level">Nivel: 1</div>
+            <div id="result"></div>
+        </div>
+        <div id="popup-container" style="display: none;">
+            <div id="popup-content">
+                <p id="popup-message"></p>
+                <button id="restart-button">Volver a jugar</button>
+                <button id="menu-button">Volver al menú</button>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='color_game/script.js') }}"></script>
+    </body>
+    </html>

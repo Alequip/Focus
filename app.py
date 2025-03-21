@@ -77,8 +77,8 @@ def delete_game(game_id):
         if game:
             db.session.delete(game)
             db.session.commit()
-        return redirect(url_for('dashboard'))
-    return redirect(url_for('login'))
+            return redirect(url_for('dashboard'))
+        return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout():
@@ -89,22 +89,29 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        # Obtener los datos del formulario
         username = request.form['username']
         password = request.form['password']
         role = request.form['role']
-        
-        # Crear el nuevo usuario
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, password=hashed_password, role=role)
-        
-        # Guardar el usuario en la base de datos
         db.session.add(new_user)
         db.session.commit()
-        
-        # Redirigir a la página de login después de registrar al usuario
         return redirect(url_for('login'))
     return render_template('register.html')
+
+@app.route('/play_game/<int:game_id>')
+def play_game(game_id):
+    game = Game.query.get(game_id)
+    if game:
+        if game.title == "Aventura de Colores":
+            return redirect(url_for('color_game'))
+        return render_template('game_play.html', game_id=game_id)
+    else:
+        return "Juego no encontrado", 404
+
+@app.route('/color_game')
+def color_game():
+    return render_template('color_game.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
