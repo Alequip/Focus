@@ -89,7 +89,7 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
+        username = request.form['username'] 
         password = request.form['password']
         role = request.form['role']
         hashed_password = generate_password_hash(password)
