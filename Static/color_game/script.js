@@ -143,9 +143,9 @@ restartButton.addEventListener('click', () => {
     startGame();
 });
 
-// Agregado
+
 menuButton.addEventListener('click', () => {
-    window.location.href = '/games/7-8'; // Redirige al menú de juegos
+    window.location.href = '/games/7-8'; 
 });
 
 document.addEventListener('DOMContentLoaded', () => {

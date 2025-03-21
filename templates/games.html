@@ -67,7 +67,7 @@
         }
 
         .game-description {
-            max-height: 100px; /* Ajusta la altura máxima según sea necesario */
+            max-height: 100px; 
             overflow: hidden;
         }
     </style>
@@ -79,7 +79,6 @@
             {% for game in games %}
             <div class="col-md-4">
                 <div class="game-card">
-                    <img src="{{ url_for('static', filename='images/game_placeholder.png') }}" alt="{{ game.title }}">
                     <h5>{{ game.title }}</h5>
                     <p class="game-description">{{ game.description }}</p>
                     <a href="/play_game/{{ game.id }}" class="btn btn-primary">Jugar</a>
