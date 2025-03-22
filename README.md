@@ -17,7 +17,7 @@ Los **estudiantes** pueden entrar a los juegos según su grupo de edad.
 
 Los **administradores** pueden manejar a los usuarios y los juegos, incluyendo darles roles y agregar o quitar juegos.
 
-### Tecnología: 
+## Tecnologías: 
 
 La aplicación está hecha con Python, Flask, SQLAlchemy y se conecta a una base de datos SQL Server. El frontend usa HTML, CSS y JavaScript.
 
