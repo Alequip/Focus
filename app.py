@@ -2,13 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, session, a
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-import pyodbc
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 app.permanent_session_lifetime = timedelta(minutes=30)
-app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc://@localhost/Inveing?driver=ODBC+Driver+17+for+SQL+Server&Trusted_Connection=yes"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inveing.db'
 db = SQLAlchemy(app)
 
 # Flask-Login configuration
@@ -142,9 +141,14 @@ def delete_user(user_id):
 def play_game(game_id):
     game = Game.query.get(game_id)
     if game:
+        print(f"Título del juego: {game.title}")  # Para debug
         if game.title == "Aventura de Colores":
             return redirect(url_for('color_game'))
-        return render_template('game_play.html', game_id=game_id)
+        elif game.title == "Juego de Memoria":
+            return redirect(url_for('memory_game'))
+        elif game.title == "Snake Game":
+            return redirect(url_for('snake_game'))
+        return f"Juego no implementado aún: {game.title}", 404
     else:
         return "Juego no encontrado", 404
 
@@ -152,5 +156,35 @@ def play_game(game_id):
 def color_game():
     return render_template('color_game.html')
 
+@app.route('/memory_game')
+@login_required
+def memory_game():
+    return render_template('memory_game.html')
+
+@app.route('/snake_game')
+@login_required
+def snake_game():
+    return render_template('snake_game.html')
+
+with app.app_context():
+    if not User.query.filter_by(username='admin').first():
+        admin_user = User(
+            username='admin',
+            password=generate_password_hash('admin123'),
+            role='admin'
+        )
+        db.session.add(admin_user)
+    
+    # Eliminar todos los juegos existentes y crear nuevos
+    Game.query.delete()
+    games = [
+        Game(age_group='7-8', title='Aventura de Colores', description='Un juego educativo para aprender los colores'),
+        Game(age_group='9-10', title='Juego de Memoria', description='Ejercita tu memoria encontrando pares de cartas'),
+        Game(age_group='11-12', title='Snake Game', description='¡El clásico juego de la serpiente! Controla la serpiente y come la comida para crecer')
+    ]
+    for game in games:
+        db.session.add(game)
+    
+    db.session.commit()
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Memoria</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/memory_game.css') }}">
+</head>
+<body>
+    <div class="container text-center memory-game-container">
+        <h2 class="mb-4">Juego de Memoria</h2>
+        <p class="instructions">Encuentra las 3 parejas de cartas</p>
+        
+        <div class="game-info">
+            <div class="score-display">Parejas encontradas: <span id="pairs-found">0</span>/3</div>
+            <div class="moves-display">Movimientos: <span id="moves">0</span></div>
+        </div>
+        
+        <div class="game-board" id="gameBoard"></div>
+        
+        <div class="game-controls">
+            <button class="btn btn-danger" onclick="resetGame()">Reiniciar</button>
+            <a href="/games/9-10" class="btn btn-secondary">Volver a juegos</a>
+        </div>
+    </div>
+
+    <script>
+        const cardImages = [
+            "{{ url_for('static', filename='images/imagen1.png') }}",
+            "{{ url_for('static', filename='images/imagen2.png') }}",
+            "{{ url_for('static', filename='images/imagen3.png') }}"
+        ];
+
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let pairsFound = 0;
+        let moves = 0;
+        let gameActive = true;
+
+        window.onload = function() {
+            initializeGame();
+        };
+
+        function initializeGame() {
+            let gameCards = [...cardImages, ...cardImages];
+            shuffleCards(gameCards);
+            createBoard(gameCards);
+        }
+
+        function createBoard(gameCards) {
+            const gameBoard = document.getElementById("gameBoard");
+            gameBoard.innerHTML = "";
+            
+            gameCards.forEach((imgSrc, index) => {
+                const card = document.createElement("div");
+                card.classList.add("card");
+                card.dataset.image = imgSrc;
+                
+                const cardInner = document.createElement("div");
+                cardInner.classList.add("card-inner");
+                
+                const cardFront = document.createElement("div");
+                cardFront.classList.add("card-front");
+                
+                const cardBack = document.createElement("div");
+                cardBack.classList.add("card-back");
+                const img = document.createElement("img");
+                img.src = imgSrc;
+                img.alt = "Carta del juego";
+                cardBack.appendChild(img);
+                
+                cardInner.appendChild(cardFront);
+                cardInner.appendChild(cardBack);
+                card.appendChild(cardInner);
+                
+                card.addEventListener("click", flipCard);
+                gameBoard.appendChild(card);
+            });
+        }
+
+        function flipCard() {
+            if (!gameActive || lockBoard || this === firstCard || this.classList.contains("flipped")) {
+                return;
+            }
+            
+            this.classList.add("flipped");
+            
+            if (!firstCard) {
+                firstCard = this;
+            } else {
+                secondCard = this;
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            lockBoard = true;
+            
+            const firstImg = firstCard.dataset.image;
+            const secondImg = secondCard.dataset.image;
+            
+            if (firstImg === secondImg) {
+                disableCards();
+                pairsFound++;
+                document.getElementById('pairs-found').textContent = pairsFound;
+                
+                if (pairsFound === cardImages.length) {
+                    endGame();
+                } else {
+                    resetBoard();
+                }
+            } else {
+                setTimeout(() => {
+                    firstCard.classList.remove("flipped");
+                    secondCard.classList.remove("flipped");
+                    resetBoard();
+                }, 1000);
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener("click", flipCard);
+            secondCard.removeEventListener("click", flipCard);
+            resetBoard();
+        }
+
+        function resetBoard() {
+            [firstCard, secondCard] = [null, null];
+            lockBoard = false;
+        }
+
+        function endGame() {
+            gameActive = false;
+            setTimeout(() => {
+                alert(`¡Felicidades! Encontraste todas las parejas en ${moves} movimientos.`);
+            }, 500);
+        }
+
+        function resetGame() {
+            firstCard = null;
+            secondCard = null;
+            lockBoard = false;
+            pairsFound = 0;
+            moves = 0;
+            gameActive = true;
+            
+            document.getElementById('pairs-found').textContent = "0";
+            document.getElementById('moves').textContent = "0";
+            
+            initializeGame();
+        }
+
+        function shuffleCards(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+    </script>
+</body>
+</html>
