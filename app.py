@@ -10,20 +10,20 @@ app.permanent_session_lifetime = timedelta(minutes=30)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inveing.db'
 db = SQLAlchemy(app)
 
-# Flask-Login configuration
+
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'  # Specify the login view function
+login_manager.login_view = 'login'  
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(10), nullable=False, default='student')  # 'admin' or 'student'
+    role = db.Column(db.String(10), nullable=False, default='student') 
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    age_group = db.Column(db.String(20), nullable=False)  # '7-8', '9-10', '11-12'
+    age_group = db.Column(db.String(20), nullable=False) 
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(300), nullable=False)
 
@@ -45,24 +45,24 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
-            login_user(user)  # Log in the user using Flask-Login
-            session['user'] = user.username  # redundante, pero se deja
-            session['role'] = user.role  # redundante, pero se deja
-            return redirect(url_for('games_selection'))  # Redirigir a la pantalla de selección de juegos
-        flash('Invalid username or password')  # Use flash for error messages
+            login_user(user) 
+            session['user'] = user.username 
+            session['role'] = user.role  
+            return redirect(url_for('games_selection')) 
+        flash('Invalid username or password')  
         return render_template('login.html')
     return render_template('login.html')
 
 def is_admin():
     if not current_user.is_authenticated or current_user.role != 'admin':
-        abort(403)  # Forbidden
+        abort(403)  
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
     if current_user.role == 'admin':
         users = User.query.all()
-        games = Game.query.all() #get games
+        games = Game.query.all()
         return render_template('admin_dashboard.html', users=users, games=games)
     return render_template('student_dashboard.html')
 
@@ -72,14 +72,14 @@ def games(age_group):
     if current_user.role == 'student':
         games_list = Game.query.filter_by(age_group=age_group).all()
         return render_template('games.html', games=games_list, age_group=age_group)
-    return redirect(url_for('dashboard')) #redirect a dashboard
+    return redirect(url_for('dashboard')) 
 
 @app.route('/games')
 @login_required
 def games_selection():
     if current_user.role == 'student':
         return render_template('games_selection.html')
-    return redirect(url_for('dashboard'))  # Redirigir a dashboard si es admin
+    return redirect(url_for('dashboard'))  
 
 @app.route('/add_game', methods=['POST'])
 @login_required
@@ -104,7 +104,7 @@ def delete_game(game_id):
     return redirect(url_for('dashboard'))
 
 @app.route('/logout')
-@login_required #Require Login
+@login_required 
 def logout():
     logout_user()
     session.clear()
@@ -116,7 +116,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, password=hashed_password, role='student')  # Set default role
+        new_user = User(username=username, password=hashed_password, role='student')  
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
@@ -137,7 +137,7 @@ def set_user_role(user_id):
 
 @app.route('/admin/user/<int:user_id>/delete', methods=['POST'])
 @login_required
-def delete_user_admin(user_id):  # Cambié el nombre de la función
+def delete_user_admin(user_id):  
     is_admin()
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
@@ -148,7 +148,7 @@ def delete_user_admin(user_id):  # Cambié el nombre de la función
 def play_game(game_id):
     game = Game.query.get(game_id)
     if game:
-        print(f"Título del juego: {game.title}")  # Para debug
+        print(f"Título del juego: {game.title}")  
         if game.title == "Aventura de Colores":
             return redirect(url_for('color_game'))
         elif game.title == "Juego de Memoria":
@@ -177,11 +177,11 @@ def snake_game():
 @login_required
 def add_user():
     if current_user.role != 'admin':
-        abort(403)  # Solo los administradores pueden agregar usuarios
+        abort(403)  
     username = request.form['username']
     password = request.form['password']
     hashed_password = generate_password_hash(password)
-    new_user = User(username=username, password=hashed_password, role='student')  # Rol predeterminado: estudiante
+    new_user = User(username=username, password=hashed_password, role='student')  
     db.session.add(new_user)
     db.session.commit()
     flash(f"Usuario {username} agregado exitosamente.", "success")
@@ -191,7 +191,7 @@ def add_user():
 @login_required
 def delete_user(user_id):
     if current_user.role != 'admin':
-        abort(403)  # Solo los administradores pueden eliminar usuarios
+        abort(403)  
     user = User.query.get_or_404(user_id)
     if user.id == current_user.id:
         flash("No puedes eliminar tu propia cuenta.", "danger")
