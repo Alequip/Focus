@@ -46,9 +46,9 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             login_user(user)  # Log in the user using Flask-Login
-            session['user'] = user.username #redundante, pero se deja
-            session['role'] = user.role #redundante, pero se deja
-            return redirect(url_for('dashboard'))
+            session['user'] = user.username  # redundante, pero se deja
+            session['role'] = user.role  # redundante, pero se deja
+            return redirect(url_for('games_selection'))  # Redirigir a la pantalla de selección de juegos
         flash('Invalid username or password')  # Use flash for error messages
         return render_template('login.html')
     return render_template('login.html')
@@ -73,6 +73,13 @@ def games(age_group):
         games_list = Game.query.filter_by(age_group=age_group).all()
         return render_template('games.html', games=games_list, age_group=age_group)
     return redirect(url_for('dashboard')) #redirect a dashboard
+
+@app.route('/games')
+@login_required
+def games_selection():
+    if current_user.role == 'student':
+        return render_template('games_selection.html')
+    return redirect(url_for('dashboard'))  # Redirigir a dashboard si es admin
 
 @app.route('/add_game', methods=['POST'])
 @login_required
@@ -130,7 +137,7 @@ def set_user_role(user_id):
 
 @app.route('/admin/user/<int:user_id>/delete', methods=['POST'])
 @login_required
-def delete_user(user_id):
+def delete_user_admin(user_id):  # Cambié el nombre de la función
     is_admin()
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
@@ -165,6 +172,34 @@ def memory_game():
 @login_required
 def snake_game():
     return render_template('snake_game.html')
+
+@app.route('/add_user', methods=['POST'])
+@login_required
+def add_user():
+    if current_user.role != 'admin':
+        abort(403)  # Solo los administradores pueden agregar usuarios
+    username = request.form['username']
+    password = request.form['password']
+    hashed_password = generate_password_hash(password)
+    new_user = User(username=username, password=hashed_password, role='student')  # Rol predeterminado: estudiante
+    db.session.add(new_user)
+    db.session.commit()
+    flash(f"Usuario {username} agregado exitosamente.", "success")
+    return redirect(url_for('dashboard'))
+
+@app.route('/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if current_user.role != 'admin':
+        abort(403)  # Solo los administradores pueden eliminar usuarios
+    user = User.query.get_or_404(user_id)
+    if user.id == current_user.id:
+        flash("No puedes eliminar tu propia cuenta.", "danger")
+        return redirect(url_for('dashboard'))
+    db.session.delete(user)
+    db.session.commit()
+    flash(f"Usuario {user.username} eliminado exitosamente.", "success")
+    return redirect(url_for('dashboard'))
 
 with app.app_context():
     if not User.query.filter_by(username='admin').first():

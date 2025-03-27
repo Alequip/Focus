@@ -1,28 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Juegos - {{ age_group }}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/games.css') }}">
+{% extends "base.html" %}
 
-</head>
-<body>
-    <div class="container">
-        <h2 class="header-title">Juegos para {{ age_group }}</h2>
-        <div class="row">
-            {% for game in games %}
-            <div class="col-md-4">
-                <div class="game-card">
-                    <h5>{{ game.title }}</h5>
-                    <p class="game-description">{{ game.description }}</p>
-                    <a href="/play_game/{{ game.id }}" class="btn btn-primary">Jugar</a>
+{% block title %}Juegos - {{ age_group }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-4">Juegos para {{ age_group }}</h1>
+    <div class="row">
+        {% for game in games %}
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ game.title }}</h5>
+                    <p class="card-text">{{ game.description }}</p>
+                    <a href="{{ url_for('play_game', game_id=game.id) }}" class="btn btn-primary w-100">Jugar</a>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        <div class="logout-btn">
-            <a href="/logout" class="btn btn-danger">Logout</a>
-        </div>
+        {% endfor %}
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
