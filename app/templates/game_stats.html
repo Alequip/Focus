@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Estadísticas del Juego{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Estadísticas del Juego</h2>
+    
+    <div class="row">
+        <!-- Veces jugado -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Veces Jugado</h5>
+                    <p class="card-text display-4">{{ stats.times_played }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Puntuación promedio -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Puntuación Promedio</h5>
+                    <p class="card-text display-4">{{ stats.average_score }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Duración promedio -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Duración Promedio</h5>
+                    <p class="card-text">{{ (stats.average_duration / 60)|round|int }} minutos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mejores jugadores -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Mejores Jugadores</h5>
+        </div>
+        <div class="card-body">
+            {% if stats.top_players %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Puntuación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for username, score in stats.top_players %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ username }}</td>
+                            <td>{{ score }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">Aún no hay jugadores registrados.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

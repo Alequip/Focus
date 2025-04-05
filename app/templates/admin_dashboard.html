@@ -10,7 +10,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+            <a class="navbar-brand" href="{{ url_for('admin.dashboard') }}">
                 <span class="platform-name" style="font-size: 1.5rem; font-weight: bold;">Focus Admin</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,7 +19,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
                     </li>
                 </ul>
             </div>
@@ -51,14 +51,14 @@
                             <td>{{ user.username }}</td>
                             <td>{{ user.role }}</td>
                             <td>
-                                <form method="POST" action="{{ url_for('set_user_role', user_id=user.id) }}" class="d-inline">
+                                <form method="POST" action="{{ url_for('admin.set_user_role', user_id=user.id) }}" class="d-inline">
                                     <select name="role" class="form-select form-select-sm d-inline-block w-auto">
                                         <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
                                         <option value="student" {% if user.role == 'student' %}selected{% endif %}>Estudiante</option>
                                     </select>
                                     <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
                                 </form>
-                                <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline">
+                                <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                                 </form>
                             </td>
@@ -68,7 +68,7 @@
                 </table>
 
                 <!-- Formulario para agregar usuarios -->
-                <form method="POST" action="{{ url_for('add_user') }}">
+                <form method="POST" action="{{ url_for('admin.add_user') }}">
                     <div class="row g-2 mt-4">
                         <div class="col-md-4">
                             <input type="text" name="username" class="form-control" placeholder="Nombre de Usuario" required>
@@ -108,7 +108,7 @@
                             <td>{{ game.age_group }}</td>
                             <td>{{ game.description }}</td>
                             <td>
-                                <form method="POST" action="{{ url_for('delete_game', game_id=game.id) }}">
+                                <form method="POST" action="{{ url_for('admin.delete_game', game_id=game.id) }}">
                                     <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                                 </form>
                             </td>
@@ -116,7 +116,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <form method="POST" action="{{ url_for('add_game') }}">
+                <form method="POST" action="{{ url_for('admin.add_game') }}">
                     <div class="row g-2">
                         <div class="col-md-3">
                             <input type="text" name="title" class="form-control" placeholder="Título del Juego" required>

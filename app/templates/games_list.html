@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Juegos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Juegos para {{ age_group }} años</h1>
+    
+    <div class="row">
+        {% for game in games %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ game.title }}</h5>
+                    <p class="card-text">{{ game.description }}</p>
+                    <a href="{{ url_for('games.play_game', game_id=game.id) }}" class="btn btn-primary">Jugar</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <p class="text-center">No hay juegos disponibles para este grupo de edad.</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('games.games_selection') }}" class="btn btn-secondary">Volver a la selección de edad</a>
+    </div>
+</div>
+{% endblock %}

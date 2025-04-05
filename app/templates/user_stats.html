@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Estadísticas{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Mis Estadísticas</h2>
+    
+    <div class="row">
+        <!-- Total de juegos -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Juegos</h5>
+                    <p class="card-text display-4">{{ stats.total_games_played }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Juego favorito -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Juego Favorito</h5>
+                    <p class="card-text">{{ stats.favorite_game or 'Ninguno aún' }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tiempo total jugado -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Tiempo Total</h5>
+                    <p class="card-text">{{ (stats.total_time_played / 60)|round|int }} minutos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mejores puntuaciones -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Mejores Puntuaciones</h5>
+        </div>
+        <div class="card-body">
+            {% if stats.best_scores %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Juego</th>
+                            <th>Mejor Puntuación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game, score in stats.best_scores.items() %}
+                        <tr>
+                            <td>{{ game }}</td>
+                            <td>{{ score }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">Aún no hay puntuaciones registradas.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
